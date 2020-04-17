@@ -4,18 +4,10 @@ function Controller(model, view) {
     this._view = view;
 }
 
-Controller.prototype.init = function() {
-    this._view.init();
-}
+// Controller.prototype.init = function() {
+//     this._view.init();
 
-Controller.prototype.addPerson = function() {
-    let sName = document.getElementById('name').value;
-    let person = {
-        name: sName,
-    };
 
-    this._model.addPerson(person);
-}
 
 module.exports = Controller;
 },{}],2:[function(require,module,exports){
@@ -37,100 +29,77 @@ module.exports = Model;
 function View() {
     this._root = document.querySelector('div#root');
 }
-const root = document.querySelector('div#root');
-
 
 const canvas = document.createElement('canvas');
 canvas.setAttribute('class', 'canvas');
 canvas.setAttribute('height', '500px');
 canvas.setAttribute('width', '500px');
-
 root.append(canvas);
 
-const ctx = getContext('2d');
+const inputDiv = document.createElement('div');
+root.appendChild(inputDiv); 
+
+const input = document.createElement('input');
+input.setAttribute('id', 'color');
+input.value = '#00000';
+input.type = 'color';
+inputDiv.appendChild(input); 
+
+const rangeDiv = document.createElement('div');
+root.appendChild(rangeDiv);
+
+const range = document.createElement('input');
+range.setAttribute('id', 'range');
+range.setAttribute('oninput', 'changeRange()');
+range.type = 'range';
+rangeDiv.appendChild(range);
+
+
+
+document.getElementById('color').oninput = function () {
+    newColor = this.value; 
+    ctx.beginPath();
+}
+
+let newColor = 'black';
+
+const ctx = canvas.getContext('2d');
+
 let isPressed = false;
+
 canvas.addEventListener('mousedown', () => {
     isPressed = true;
-});
+})
 
 canvas.addEventListener('mouseup', () => {
     isPressed = false;
-});
+    ctx.beginPath();
+})
+
 
 canvas.addEventListener('mousemove', (e) => {
-    ctx.beginPath();
-    ctx.arc(e.clientX, e.clientY, 10, 0, 2* Math.PI);
-    ctx.fillStyle = 'blue';
-    ctx.fill();
-});
+    if(isPressed) {
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+        ctx.lineWidth = 10 * 2;
 
-// View.prototype.init = function() {
-//     const containerFirst = createDiv({class: 'container-first'});
-//     const formTag = createForm('container-first__form-input');
-//     const RegDiv = createDiv({
-//         class: 'find',
-//         title: 'регистрация',
-//         textContent: 'введите данные',
-//     });
-//     const label = createLabel({
-//         name: 'name',
-//         inner: 'Имя <span>*</span>',
-//     });
-//     const nameInput = createInput({
-//         id: 'name',
-//         name: 'name',
-//         placeholder: 'Введите имя',
-//     });
-//     const labelSurname = createLabel({
-//         name: 'surname',
-//         inner: 'Фамилия <span>*</span>',
-//     });
+        ctx.beginPath();
+        ctx.arc(e.clientX, e.clientY, 10, 0, 2*Math.PI);
+        ctx.fillStyle = newColor;
+        ctx.fill();
 
-//     formTag.appendChild(labelSurname);
-//     formTag.appendChild(nameInput);
-//     formTag.appendChild(label);
-//     formTag.append(RegDiv);
-//     containerFirst.append(formTag);
-//     this._root.append(containerFirst);
-// }
+        ctx.beginPath();
+        ctx.moveTo(e.clientX, e.clientY);
+        ctx.fillStyle = newColor;
+        ctx.fill();
+    }
+})
 
-// const createDiv = params => {
-//     const div = document.createElement('div');
-//     div.setAttribute('class', params.class)
-//     params.id && (div.id = params.id);
-//     params.title && (div.title = params.title);
-//     params.textContent && (div.textContent = params.textContent);
-//     params.inner && (div.innerHTML = params.inner);
+const val = range.value;
+box.style.lineWidth() = val;
 
-//     return div;
-// };
 
-// const createForm = id => {
-//     const form = document.createElement('form');
-//     form.id = id;
-
-//     return form;
-// }
-
-// const createLabel = params => {
-//     const label = document.createElement('label');
-//     label.setAttribute('for', params.name);
-//     params.inner && (label.innerHTML = params.inner);
-
-//     return label;
-// }
-
-// const createInput = params => {
-//     const input = document.createElement('input');
-//     input.setAttribute('type', params.type || 'text');
-//     params.id && input.setAttribute('id', params.id);
-//     params.name && input.setAttribute('name', params.name);
-//     params.placeholder && (input.placeholder = params.placeholder);
-
-//     return input;
-// }
-
-module.exports = View;
+ module.exports = View;
 },{}],4:[function(require,module,exports){
 const Model = require('./Model.js');
 const View = require('./View.js');
@@ -143,6 +112,8 @@ function initProject() {
 
     controller.init()
 }
+
+
 
 initProject();
 },{"./Controller.js":1,"./Model.js":2,"./View.js":3}]},{},[4]);
